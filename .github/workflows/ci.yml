@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  bouw:
+    name: Bouw voor iOS-simulator
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Xcode-versie
+        run: xcodebuild -version
+
+      - name: Bouw
+        run: |
+          set -o pipefail
+          xcodebuild build \
+            -project Taken.xcodeproj \
+            -scheme Taken \
+            -destination 'generic/platform=iOS Simulator' \
+            -configuration Debug \
+            CODE_SIGNING_ALLOWED=NO \
+            2>&1 | tee bouw.log | grep -E --line-buffered 'error:|warning:|BUILD|^\*\*'
+
+      - name: Fouten
+        if: failure()
+        run: grep -E -B2 -A6 'error:' bouw.log || true
