@@ -11,7 +11,7 @@ jobs:
     name: Bouw voor iOS-simulator
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Xcode-versie
         run: xcodebuild -version
